@@ -17,7 +17,7 @@ model User {
   nickname String  @unique @db.VarChar(30)
   birth String     @db.VarChar(20)
   gender String    @db.Char(1)
-  created_at DateTime
+  created_at DateTime @default(now())
   updated_at DateTime?
 
 
@@ -42,8 +42,8 @@ model Follow {
 model Feed{
  feed_id Int @id @default(autoincrement())
  contents String @db.Text()
- created_at DateTime
- updated_at DateTime?
+ created_at DateTime @default(now())
+ updated_at DateTime? 
 
  user_id Int
   user User @relation(fields: [user_id], references: [user_id]) 
@@ -55,7 +55,7 @@ feedlikes Feedlike[]
 model Comment {
   comment_id Int @id @default(autoincrement())
   contents String
-  created_at DateTime
+  created_at DateTime @default(now())
   updated_at DateTime?
   
   feed_id Int
