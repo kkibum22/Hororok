@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  ID    Int        @id @default(autoincrement())
+  id    Int        @id @default(autoincrement())
   PW String        @db.VarChar(30)
   NAME String      @db.VarChar(20)
   NICKNAME String  @unique @db.VarChar(30)
@@ -19,4 +19,19 @@ model User {
   GENDER String    @db.Char(1)
   created_at DateTime? 
   Updated_at DateTime? 
+
+
+  following Follow[] @relation("from_user")
+  follwers Follow[]  @relation("to_user")
+}
+
+
+model Follow {
+  FOLLOW_ID  Int    @id @default(autoincrement())
+
+  to_user_id Int
+  to_user User @relation("to_user", fields: [to_user_id], references: [id]) 
+
+  from_user_id Int
+  from_user  User @relation("from_user", fields: [from_user_id], references: [id])
 }
