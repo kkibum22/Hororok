@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String
-  nickname String
-  birth Int
-  gender String
-  created_at DateTime
-  Updated_at DateTime
+  ID    Int        @id @default(autoincrement())
+  PW String        @db.VarChar(30)
+  NAME String      @db.VarChar(20)
+  NICKNAME String  @unique @db.VarChar(30)
+  BIRTH String     @db.VarChar(20)
+  GENDER String    @db.Char(1)
+  created_at DateTime? 
+  Updated_at DateTime? 
 }
