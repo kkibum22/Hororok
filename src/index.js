@@ -6,6 +6,7 @@ import Controllers from './modules';
 
 (async () => {
   const app = express();
+  // db connection
   await prisma.$connect();
 
   // middleware
@@ -14,10 +15,12 @@ import Controllers from './modules';
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
+  // route
   Controllers.forEach((controller) => {
     app.use(controller.path, controller.router);
   });
 
+  // error handling
   app.use((err, req, res, next) => {
     res
       .status(err.status || 500)
