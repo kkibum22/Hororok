@@ -25,6 +25,7 @@ model User {
   follwers Follow[]  @relation("to_user")
   feeds Feed[]
   comments Comment[]
+  feedlikes Feedlike[]
 }
 
 
@@ -48,6 +49,7 @@ model Feed{
   user User @relation(fields: [user_id], references: [user_id]) 
 
 comments Comment[]
+feedlikes Feedlike[]
 }
 
 model Comment {
@@ -61,4 +63,14 @@ model Comment {
 
   user_id Int
   user User @relation(fields: [user_id],references: [user_id])
+}
+
+model Feedlike{
+  user_id Int
+  user User @relation(fields: [user_id],references: [user_id])
+
+  feed_id Int
+  feed Feed @relation(fields: [feed_id],references: [feed_id])
+
+  @@id([user_id, feed_id])
 }
