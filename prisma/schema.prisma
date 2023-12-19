@@ -24,6 +24,7 @@ model User {
   following Follow[] @relation("from_user")
   follwers Follow[]  @relation("to_user")
   feeds Feed[]
+  comments Comment[]
 }
 
 
@@ -46,4 +47,18 @@ model Feed{
  user_id Int
   user User @relation(fields: [user_id], references: [user_id]) 
 
+comments Comment[]
+}
+
+model Comment {
+  comment_id Int @id @default(autoincrement())
+  contents String
+  created_at DateTime
+  updated_at DateTime?
+  
+  feed_id Int
+  feed Feed @relation(fields: [feed_id], references: [feed_id])
+
+  user_id Int
+  user User @relation(fields: [user_id],references: [user_id])
 }
