@@ -126,6 +126,32 @@ class UsersService {
       },
     });
   }
+
+  async deleteFollows(fromUserId, toUserId) {
+    const toUser = await prisma.user.findUnique({
+      where: {
+        user_id: toUserId,
+      },
+    });
+
+    if (!toUser) {
+      throw { status: 404, message: '유저를 찾을 수 없습니다.' };
+    }
+
+    const isFollowed = await prisma.follow.findFirst({
+      where: {
+        from_user_id: fromUserId,
+        to_user_id: toUserId,
+      },
+    });
+    if (!isFollowed) return;
+
+    await prisma.follow.delete({
+      where: {
+        follow_id: isFollowed.follow_id,
+      },
+    });
+  }
 }
 
 export default UsersService;
