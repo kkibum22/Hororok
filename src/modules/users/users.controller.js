@@ -21,8 +21,8 @@ class UserController {
     this.router.get('/:userId', this.getUser.bind(this));
     this.router.patch('/:userId', isAuthenticated, this.editUser.bind(this));
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
-    this.router.get('/:userId/followers', this.getFollwers.bind(this));
-    // this.router.get('/:userId/follwing', this.getUsers.bind(this));
+    this.router.get('/:userId/followers', this.getFollowers.bind(this));
+    this.router.get('/:userId/following', this.getFollowing.bind(this));
     // this.router.post(
     //   '/:fromUserId/follows/:toUserId',
     //   this.getUsers.bind(this),
@@ -102,7 +102,7 @@ class UserController {
     }
   }
 
-  async getFollwers(req, res, next) {
+  async getFollowers(req, res, next) {
     try {
       const userId = Number(req.params.userId);
       if (!Number.isInteger(userId)) {
@@ -115,6 +115,24 @@ class UserController {
       res
         .status(200)
         .json({ follwers: follwers.map((user) => new UserDto(user)) });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getFollowing(req, res, next) {
+    try {
+      const userId = Number(req.params.userId);
+      if (!Number.isInteger(userId)) {
+        throw {
+          status: 400,
+          message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      const follwing = await this.usersService.findFollowingById(userId);
+      res
+        .status(200)
+        .json({ follwing: follwing.map((user) => new UserDto(user)) });
     } catch (err) {
       next(err);
     }

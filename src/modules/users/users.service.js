@@ -79,6 +79,26 @@ class UsersService {
 
     return user.follwers.map((user) => user.from_user);
   }
+
+  async findFollowingById(userId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        user_id: userId,
+      },
+      include: {
+        follwers: {
+          include: {
+            to_user: true,
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw { status: 404, message: '해당 유저가 존재하지 않습니다.' };
+    }
+
+    return user.follwers.map((user) => user.to_user);
+  }
 }
 
 export default UsersService;
