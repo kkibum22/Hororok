@@ -1,4 +1,4 @@
-class UsersDto {
+class UserDto {
   userId;
   id;
   name;
@@ -13,7 +13,9 @@ class UsersDto {
     this.nickname = props.nickname;
     this.birth = props.birth;
     this.gender = props.gender;
+    this.createdAt = props.created_at;
+    this.updatedAt = props.updated_at;
   }
 }
 
-export default UsersDto;
+export default UserDto;
