@@ -1,9 +1,9 @@
-import { Router } from "express";
-import AuthService from "./auth.service";
+import { Router } from 'express';
+import AuthService from './auth.service';
 
 class AuthController {
   router;
-  path = "/auth"; // path-prefix
+  path = '/auth'; // path-prefix
   authService;
 
   constructor() {
@@ -14,8 +14,8 @@ class AuthController {
 
   // route 등록
   init() {
-    this.router.post("/login", this.login.bind(this));
-    this.router.post("/register", this.register.bind(this));
+    this.router.post('/login', this.login.bind(this));
+    this.router.post('/register', this.register.bind(this));
   }
 
   async login(req, res, next) {

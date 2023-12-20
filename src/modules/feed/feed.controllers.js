@@ -1,9 +1,9 @@
-import { Router } from "express";
-import FeedService from "./feed.service";
+import { Router } from 'express';
+import FeedService from './feed.service';
 
 class FeedController {
   router;
-  path = "/feed"; // path-prefix
+  path = '/feed'; // path-prefix
   feedService;
 
   constructor() {
@@ -14,7 +14,7 @@ class FeedController {
 
   // route 등록
   init() {
-    this.router.get("/", this.getfeed.bind(this));
+    this.router.get('/', this.getfeed.bind(this));
   }
 
   async getfeed(req, res, next) {

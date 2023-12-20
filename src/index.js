@@ -1,10 +1,10 @@
-import cors from "cors";
-import express from "express";
-import helmet from "helmet";
-import prisma from "./db";
-import Controllers from "./modules";
-import cookieParser from "cookie-parser";
-import session from "express-session";
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import prisma from './db';
+import Controllers from './modules';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 (async () => {
   const app = express();
@@ -19,11 +19,11 @@ import session from "express-session";
   app.use(express.urlencoded({ extended: false }));
   app.use(
     session({
-      secret: "keyboard cat",
+      secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
       cookie: { secure: true },
-    })
+    }),
   );
 
   // route
@@ -35,10 +35,10 @@ import session from "express-session";
   app.use((err, req, res, next) => {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "서버에서 에러가 발생하였습니다." });
+      .json({ message: err.message || '서버에서 에러가 발생하였습니다.' });
   });
 
   app.listen(8000, () => {
-    console.log("서버가 시작되었습니다.");
+    console.log('서버가 시작되었습니다.');
   });
 })();

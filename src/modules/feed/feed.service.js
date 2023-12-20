@@ -1,8 +1,8 @@
-import prisma from "../../db";
+import prisma from '../../db';
 
 class FeedService {
   async findFeed() {
-    const feed = [{ id: 1, name: "name" }];
+    const feed = [{ id: 1, name: 'name' }];
     return feed;
   }
 }
