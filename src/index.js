@@ -3,6 +3,9 @@ import express from 'express';
 import helmet from 'helmet';
 import prisma from './db';
 import Controllers from './modules';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+const MemoryStore = require('memorystore')(session);
 
 (async () => {
   const app = express();
@@ -13,7 +16,19 @@ import Controllers from './modules';
   app.use(cors());
   app.use(helmet());
   app.use(express.json());
+  app.use(cookieParser());
   app.use(express.urlencoded({ extended: false }));
+  app.use(
+    session({
+      secret: 'keyboard cat',
+      resave: false,
+      saveUninitialized: false,
+      store: new MemoryStore({
+        checkPeriod: 86400000,
+      }),
+      cookie: { maxAge: 86400000 },
+    }),
+  );
 
   // route
   Controllers.forEach((controller) => {
