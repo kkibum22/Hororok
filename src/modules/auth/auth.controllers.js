@@ -20,9 +20,9 @@ class AuthController {
 
   async login(req, res, next) {
     try {
-      const { name, pw } = req.body;
+      const { id, pw } = req.body;
 
-      const user = await this.authService.login(name, pw);
+      const user = await this.authService.login(id, pw);
 
       req.session.user = user;
       req.session.save((err) => {
@@ -38,9 +38,10 @@ class AuthController {
 
   async register(req, res, next) {
     try {
-      const { pw, name, nickname, birth, gender } = req.body;
+      const { id, pw, name, nickname, birth, gender } = req.body;
 
       const user = await this.authService.createUser(
+        id,
         pw,
         name,
         nickname,

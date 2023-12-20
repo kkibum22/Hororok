@@ -1,10 +1,10 @@
 import prisma from '../../db';
 
 class AuthService {
-  async createUser(pw, name, nickname, birth, gender) {
+  async createUser(id, pw, name, nickname, birth, gender) {
     const existUser = await prisma.user.findFirst({
       where: {
-        name: name,
+        id: id,
       },
     });
 
@@ -13,16 +13,16 @@ class AuthService {
     }
 
     const user = await prisma.user.create({
-      data: { pw, name, nickname, birth, gender },
+      data: { id, pw, name, nickname, birth, gender },
     });
 
     return user;
   }
 
-  async login(name, pw) {
+  async login(id, pw) {
     const existUser = await prisma.user.findFirst({
       where: {
-        name: name,
+        id: id,
       },
     });
     if (!existUser) {
