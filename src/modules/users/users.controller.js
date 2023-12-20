@@ -21,7 +21,7 @@ class UserController {
     this.router.get('/:userId', this.getUser.bind(this));
     this.router.patch('/:userId', isAuthenticated, this.editUser.bind(this));
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
-    // this.router.get('/:userId/followers', this.getUsers.bind(this));
+    this.router.get('/:userId/followers', this.getFollwers.bind(this));
     // this.router.get('/:userId/follwing', this.getUsers.bind(this));
     // this.router.post(
     //   '/:fromUserId/follows/:toUserId',
@@ -97,6 +97,24 @@ class UserController {
       await this.usersService.deleteUser(userId);
 
       res.status(204).json({});
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getFollwers(req, res, next) {
+    try {
+      const userId = Number(req.params.userId);
+      if (!Number.isInteger(userId)) {
+        throw {
+          status: 400,
+          message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      const follwers = await this.usersService.findFollowersById(userId);
+      res
+        .status(200)
+        .json({ follwers: follwers.map((user) => new UserDto(user)) });
     } catch (err) {
       next(err);
     }
