@@ -28,6 +28,16 @@ class AuthController {
 
   async register(req, res, next) {
     try {
+      const { pw, name, nickName, birth, gender } = req.body;
+
+      const user = await this.authService.createUser(
+        pw,
+        name,
+        nickName,
+        birth,
+        gender,
+      );
+
       res.status(200).json({});
     } catch (err) {
       next(err);
