@@ -4,7 +4,7 @@ class AuthService {
   async createUser(id, pw, name, nickname, birth, gender) {
     const existUser = await prisma.user.findFirst({
       where: {
-        name: name,
+        id: id,
       },
     });
 
