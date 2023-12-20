@@ -5,6 +5,7 @@ import prisma from './db';
 import Controllers from './modules';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+const MemoryStore = require('memorystore')(session);
 
 (async () => {
   const app = express();
@@ -21,8 +22,11 @@ import session from 'express-session';
     session({
       secret: 'keyboard cat',
       resave: false,
-      saveUninitialized: true,
-      cookie: { secure: true },
+      saveUninitialized: false,
+      store: new MemoryStore({
+        checkPeriod: 86400000,
+      }),
+      cookie: { maxAge: 86400000 },
     }),
   );
 

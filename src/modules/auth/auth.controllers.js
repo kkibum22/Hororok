@@ -20,7 +20,17 @@ class AuthController {
 
   async login(req, res, next) {
     try {
-      res.status(200).json({});
+      const { name, pw } = req.body;
+
+      const user = await this.authService.login(name, pw);
+
+      req.session.user = user;
+      req.session.save((err) => {
+        if (err) {
+          next(err);
+        }
+        res.redirect('/');
+      });
     } catch (err) {
       next(err);
     }
