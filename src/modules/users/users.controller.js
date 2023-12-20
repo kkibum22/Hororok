@@ -76,7 +76,7 @@ class UserController {
       const editUserDto = new EditUserDTO(req.body);
 
       await this.usersService.editUser(userId, editUserDto);
-      res.status(200).json({});
+      res.status(204).json({});
     } catch (err) {
       next(err);
     }
