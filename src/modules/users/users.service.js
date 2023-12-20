@@ -86,7 +86,7 @@ class UsersService {
         user_id: userId,
       },
       include: {
-        follwers: {
+        following: {
           include: {
             to_user: true,
           },
@@ -97,7 +97,34 @@ class UsersService {
       throw { status: 404, message: '해당 유저가 존재하지 않습니다.' };
     }
 
-    return user.follwers.map((user) => user.to_user);
+    return user.following.map((user) => user.to_user);
+  }
+
+  async createFollows(fromUserId, toUserId) {
+    const toUser = await prisma.user.findUnique({
+      where: {
+        user_id: toUserId,
+      },
+    });
+
+    if (!toUser) {
+      throw { status: 404, message: '유저를 찾을 수 없습니다.' };
+    }
+
+    const isFollowed = await prisma.follow.findFirst({
+      where: {
+        from_user_id: fromUserId,
+        to_user_id: toUserId,
+      },
+    });
+    if (isFollowed) return;
+
+    await prisma.follow.create({
+      data: {
+        from_user_id: fromUserId,
+        to_user_id: toUserId,
+      },
+    });
   }
 }
 

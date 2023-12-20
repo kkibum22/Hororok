@@ -23,10 +23,11 @@ class UserController {
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
     this.router.get('/:userId/followers', this.getFollowers.bind(this));
     this.router.get('/:userId/following', this.getFollowing.bind(this));
-    // this.router.post(
-    //   '/:fromUserId/follows/:toUserId',
-    //   this.getUsers.bind(this),
-    // );
+    this.router.post(
+      '/:fromUserId/follows/:toUserId',
+      isAuthenticated,
+      this.follow.bind(this),
+    );
     // this.router.delete(
     //   '/:fromUserId/follows/:toUserId',
     //   this.getUsers.bind(this),
@@ -133,6 +134,29 @@ class UserController {
       res
         .status(200)
         .json({ follwing: follwing.map((user) => new UserDto(user)) });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async follow(req, res, next) {
+    try {
+      const sessionUser = req.session.user;
+      const fromUserId = Number(req.params.fromUserId);
+      const toUserId = Number(req.params.toUserId);
+
+      if (!Number.isInteger(fromUserId) || !Number.isInteger(toUserId)) {
+        throw {
+          status: 400,
+          message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      if (sessionUser.user_id !== fromUserId) {
+        throw { status: 401, message: '권한이 없습니다.' };
+      }
+      this.usersService.createFollows(fromUserId, toUserId);
+
+      res.status(204).json({});
     } catch (err) {
       next(err);
     }
