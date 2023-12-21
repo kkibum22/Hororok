@@ -18,6 +18,11 @@ class UserController {
   // route 등록
   init() {
     this.router.get('/', this.getUsers.bind(this));
+    this.router.get(
+      '/current',
+      isAuthenticated,
+      this.getCurrentUser.bind(this),
+    );
     this.router.get('/:userId', this.getUser.bind(this));
     this.router.patch('/:userId', isAuthenticated, this.editUser.bind(this));
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
@@ -54,6 +59,17 @@ class UserController {
         };
       }
       const user = await this.usersService.findByUserId(userId);
+      res.status(200).json({ user: new UserDto(user) });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getCurrentUser(req, res, next) {
+    try {
+      const currentUser = req.session.user;
+
+      const user = await this.usersService.findByUserId(currentUser.user_id);
       res.status(200).json({ user: new UserDto(user) });
     } catch (err) {
       next(err);
