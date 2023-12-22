@@ -16,7 +16,7 @@ model User {
   pw         String
   name       String    @db.VarChar(20)
   nickname   String    @db.VarChar(30)
-  birth      DateTime
+  birth      DateTime  @db.Date
   gender     String    @db.Char(1)
   created_at DateTime  @default(now())
   updated_at DateTime?
