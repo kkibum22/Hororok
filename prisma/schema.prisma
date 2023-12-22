@@ -16,13 +16,13 @@ model User {
   pw         String
   name       String    @db.VarChar(20)
   nickname   String    @db.VarChar(30)
-  birth      String    @db.VarChar(20)
+  birth      DateTime
   gender     String    @db.Char(1)
   created_at DateTime  @default(now())
   updated_at DateTime?
 
   following Follow[]   @relation("from_user")
-  follwers  Follow[]   @relation("to_user")
+  followers  Follow[]   @relation("to_user")
   feeds     Feed[]
   comments  Comment[]
   feedlikes Feedlike[]
