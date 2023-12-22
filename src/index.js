@@ -13,7 +13,12 @@ const MemoryStore = require('memorystore')(session);
   await prisma.$connect();
 
   // middleware
-  app.use(cors());
+  app.use(
+    cors({
+      origin: 'http://localhost:5173', // Vue 앱의 URL로 변경
+      credentials: true,
+    }),
+  );
   app.use(helmet());
   app.use(express.json());
   app.use(cookieParser());
@@ -23,10 +28,16 @@ const MemoryStore = require('memorystore')(session);
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: false,
+      unset: 'destroy',
       store: new MemoryStore({
         checkPeriod: 86400000,
       }),
-      cookie: { maxAge: 86400000 },
+      cookie: {
+        maxAge: 86400000,
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+      },
     }),
   );
 
