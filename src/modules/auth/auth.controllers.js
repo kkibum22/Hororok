@@ -29,7 +29,7 @@ class AuthController {
         if (err) {
           next(err);
         }
-        res.redirect('/');
+        res.status(200).json({});
       });
     } catch (err) {
       next(err);
