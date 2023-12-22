@@ -132,7 +132,7 @@ class UserController {
       const follwers = await this.usersService.findFollowersById(userId);
       res
         .status(200)
-        .json({ follwers: follwers.map((user) => new UserDto(user)) });
+        .json({ followers: follwers.map((user) => new UserDto(user)) });
     } catch (err) {
       next(err);
     }
@@ -168,6 +168,12 @@ class UserController {
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
         };
       }
+      if (fromUserId === toUserId) {
+        throw {
+          status: 400,
+          message: '자신을 팔로우 할 수 없습니다.',
+        };
+      }
       if (sessionUser.user_id !== fromUserId) {
         throw { status: 401, message: '권한이 없습니다.' };
       }
@@ -189,6 +195,12 @@ class UserController {
         throw {
           status: 400,
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      if (fromUserId === toUserId) {
+        throw {
+          status: 400,
+          message: '자신을 언팔로우 할 수 없습니다.',
         };
       }
       if (sessionUser.user_id !== fromUserId) {

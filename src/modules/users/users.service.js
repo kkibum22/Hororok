@@ -66,7 +66,7 @@ class UsersService {
         user_id: userId,
       },
       include: {
-        follwers: {
+        followers: {
           include: {
             from_user: true,
           },
@@ -77,7 +77,7 @@ class UsersService {
       throw { status: 404, message: '해당 유저가 존재하지 않습니다.' };
     }
 
-    return user.follwers.map((user) => user.from_user);
+    return user.followers.map((user) => user.from_user);
   }
 
   async findFollowingById(userId) {
