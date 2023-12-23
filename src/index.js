@@ -135,6 +135,50 @@ const MemoryStore = require('memorystore')(session);
     app.use(controller.path, controller.router);
   });
 
+  //피드 수정
+  app.patch('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
+    const { feedId } = req.params;
+    const { contents } = req.body;
+    const user = req.session.user;
+    try {
+      const upadtedFeed = await prisma.feed.update({
+        where: {
+          feed_id: parseInt(feedId),
+        },
+        data: {
+          contents,
+          user: { connect: { user_id: parseInt(user.user_id) } },
+        },
+      });
+      res.status(204).json();
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  //피드 삭제
+  app.delete('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
+    const { feedId } = req.params;
+    const user = req.session.user;
+
+    try {
+      const deletedFeed = await prisma.feed.delete({
+        where: {
+          feed_id: parseInt(feedId),
+          user_id: parseInt(user.user_id),
+        },
+      });
+      res.status(204).json();
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // route
+  Controllers.forEach((controller) => {
+    app.use(controller.path, controller.router);
+  });
+
   // error handling
   app.use((err, req, res, next) => {
     res
