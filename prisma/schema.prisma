@@ -45,7 +45,7 @@ model Feed {
   updated_at DateTime?
 
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id])
+  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
 
   comments  Comment[]
   feedlikes Feedlike[]
@@ -58,18 +58,18 @@ model Comment {
   updated_at DateTime?
 
   feed_id Int
-  feed    Feed @relation(fields: [feed_id], references: [feed_id])
+  feed    Feed @relation(fields: [feed_id], references: [feed_id], onDelete: Cascade)
 
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id])
+  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
 }
 
 model Feedlike {
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id])
+  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
 
   feed_id Int
-  feed    Feed @relation(fields: [feed_id], references: [feed_id])
+  feed    Feed @relation(fields: [feed_id], references: [feed_id],onDelete: Cascade)
 
   @@id([user_id, feed_id])
 }
