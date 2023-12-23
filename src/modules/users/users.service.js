@@ -108,6 +108,32 @@ class UsersService {
     return user.following.map((user) => user.to_user);
   }
 
+  async findLikedFeedsByUserId(userId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        user_id: userId,
+      },
+      include: {
+        following: {
+          include: {
+            to_user: true,
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw { status: 404, message: '해당 유저가 존재하지 않습니다.' };
+    }
+
+    const likedFeeds = await prisma.feedlike.findMany({
+      where: {
+        user_id: user.user_id,
+      },
+    });
+
+    return likedFeeds.map((n) => n.user_id);
+  }
+
   async createFollows(fromUserId, toUserId) {
     const toUser = await prisma.user.findUnique({
       where: {
