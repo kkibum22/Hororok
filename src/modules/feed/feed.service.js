@@ -28,16 +28,6 @@ class FeedService {
     const feeds = await prisma.feed.findMany();
     return feeds;
   }
-
-  async patchFeed() {
-    const feed = [{ id: 1, name: 'name' }];
-    return feed;
-  }
-
-  async deleteFeed() {
-    const feed = [{ id: 1, name: 'name' }];
-    return feed;
-  }
 }
 
 export default FeedService;
