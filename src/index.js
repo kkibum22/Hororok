@@ -5,6 +5,7 @@ import prisma from './db';
 import Controllers from './modules';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import { isAuthenticated } from './middlewares/isAuthenticated';
 const MemoryStore = require('memorystore')(session);
 
 (async () => {
@@ -31,25 +32,29 @@ const MemoryStore = require('memorystore')(session);
   );
 
   //코멘트 생성
-  app.post('/feeds/:feedId/comments', async (req, res, next) => {
-    const { feedId } = req.params;
-    const { contents } = req.body;
-    const user = req.session.user;
+  app.post(
+    '/feeds/:feedId/comments',
+    isAuthenticated,
+    async (req, res, next) => {
+      const { feedId } = req.params;
+      const { contents } = req.body;
+      const user = req.session.user;
 
-    console.log(user);
-    try {
-      const newComment = await prisma.comment.create({
-        data: {
-          contents,
-          feed: { connect: { feed_id: parseInt(feedId) } },
-          user: { connect: { user_id: parseInt(user.user_id) } },
-        },
-      });
-      res.status(201).json();
-    } catch (err) {
-      next(err);
-    }
-  });
+      console.log(user);
+      try {
+        const newComment = await prisma.comment.create({
+          data: {
+            contents,
+            feed: { connect: { feed_id: parseInt(feedId) } },
+            user: { connect: { user_id: parseInt(user.user_id) } },
+          },
+        });
+        res.status(201).json();
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 
   //코멘트 조회
   app.get('/feeds/:feedId/comments', async (req, res, next) => {
@@ -68,43 +73,51 @@ const MemoryStore = require('memorystore')(session);
   });
 
   //코멘트 수정
-  app.patch('/feeds/comments/:commentId', async (req, res, next) => {
-    const { commentId } = req.params;
-    const { contents } = req.body;
-    const user = req.session.user;
-    try {
-      const upadtedComment = await prisma.comment.update({
-        where: {
-          comment_id: parseInt(commentId),
-        },
-        data: {
-          contents,
-          user: { connect: { user_id: parseInt(user.user_id) } },
-        },
-      });
-      res.status(204).json();
-    } catch (err) {
-      next(err);
-    }
-  });
+  app.patch(
+    '/feeds/comments/:commentId',
+    isAuthenticated,
+    async (req, res, next) => {
+      const { commentId } = req.params;
+      const { contents } = req.body;
+      const user = req.session.user;
+      try {
+        const upadtedComment = await prisma.comment.update({
+          where: {
+            comment_id: parseInt(commentId),
+          },
+          data: {
+            contents,
+            user: { connect: { user_id: parseInt(user.user_id) } },
+          },
+        });
+        res.status(204).json();
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 
   //코멘트 삭제
-  app.delete('/feeds/comments/:commentId', async (req, res, next) => {
-    const { commentId } = req.params;
-    const user = req.session.user;
+  app.delete(
+    '/feeds/comments/:commentId',
+    isAuthenticated,
+    async (req, res, next) => {
+      const { commentId } = req.params;
+      const user = req.session.user;
 
-    try {
-      const deletedComment = await prisma.comment.delete({
-        where: {
-          comment_id: parseInt(commentId),
-          user_id: parseInt(user.user_id),
-        },
-      });
-      res.status(204).json();
-    } catch (err) {
-      next(err);
-    }
-  });
+      try {
+        const deletedComment = await prisma.comment.delete({
+          where: {
+            comment_id: parseInt(commentId),
+            user_id: parseInt(user.user_id),
+          },
+        });
+        res.status(204).json();
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 
   // route
   Controllers.forEach((controller) => {
