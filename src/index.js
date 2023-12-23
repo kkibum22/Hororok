@@ -130,11 +130,6 @@ const MemoryStore = require('memorystore')(session);
     },
   );
 
-  // route
-  Controllers.forEach((controller) => {
-    app.use(controller.path, controller.router);
-  });
-
   //피드 수정
   app.patch('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
     const { feedId } = req.params;
