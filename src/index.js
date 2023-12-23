@@ -67,13 +67,18 @@ const MemoryStore = require('memorystore')(session);
     },
   );
 
-  //코멘트 조회
   app.get('/feeds/:feedId/comments', async (req, res, next) => {
     const { feedId } = req.params;
     try {
       const comments = await prisma.comment.findMany({
         where: {
           feed_id: parseInt(feedId),
+        },
+        orderBy: {
+          created_at: 'desc',
+        },
+        include: {
+          user: true,
         },
       });
       res.status(200).json({ comments: comments });
@@ -129,11 +134,6 @@ const MemoryStore = require('memorystore')(session);
       }
     },
   );
-
-  // route
-  Controllers.forEach((controller) => {
-    app.use(controller.path, controller.router);
-  });
 
   //피드 수정
   app.patch('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
