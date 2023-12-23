@@ -18,11 +18,17 @@ class UserController {
   // route 등록
   init() {
     this.router.get('/', this.getUsers.bind(this));
+    this.router.get(
+      '/current',
+      isAuthenticated,
+      this.getCurrentUser.bind(this),
+    );
     this.router.get('/:userId', this.getUser.bind(this));
     this.router.patch('/:userId', isAuthenticated, this.editUser.bind(this));
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
     this.router.get('/:userId/followers', this.getFollowers.bind(this));
     this.router.get('/:userId/following', this.getFollowing.bind(this));
+    this.router.get('/:userId/liked-feeds', this.getLikedFeeds.bind(this));
     this.router.post(
       '/:fromUserId/follows/:toUserId',
       isAuthenticated,
@@ -54,6 +60,17 @@ class UserController {
         };
       }
       const user = await this.usersService.findByUserId(userId);
+      res.status(200).json({ user: new UserDto(user) });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getCurrentUser(req, res, next) {
+    try {
+      const currentUser = req.session.user;
+
+      const user = await this.usersService.findByUserId(currentUser.user_id);
       res.status(200).json({ user: new UserDto(user) });
     } catch (err) {
       next(err);
@@ -113,10 +130,10 @@ class UserController {
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
         };
       }
-      const follwers = await this.usersService.findFollowersById(userId);
+      const followers = await this.usersService.findFollowersById(userId);
       res
         .status(200)
-        .json({ follwers: follwers.map((user) => new UserDto(user)) });
+        .json({ followers: followers.map((user) => new UserDto(user)) });
     } catch (err) {
       next(err);
     }
@@ -131,11 +148,31 @@ class UserController {
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
         };
       }
-      const follwing = await this.usersService.findFollowingById(userId);
+      const following = await this.usersService.findFollowingById(userId);
+
       res
         .status(200)
-        .json({ follwing: follwing.map((user) => new UserDto(user)) });
+        .json({ following: following.map((user) => new UserDto(user)) });
     } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+
+  async getLikedFeeds(req, res, next) {
+    try {
+      const userId = Number(req.params.userId);
+      if (!Number.isInteger(userId)) {
+        throw {
+          status: 400,
+          message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      const likedFeeds = await this.usersService.findLikedFeedsByUserId(userId);
+
+      res.status(200).json({ liked_feeds: likedFeeds });
+    } catch (err) {
+      console.log(err);
       next(err);
     }
   }
@@ -150,6 +187,12 @@ class UserController {
         throw {
           status: 400,
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      if (fromUserId === toUserId) {
+        throw {
+          status: 400,
+          message: '자신을 팔로우 할 수 없습니다.',
         };
       }
       if (sessionUser.user_id !== fromUserId) {
@@ -173,6 +216,12 @@ class UserController {
         throw {
           status: 400,
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      if (fromUserId === toUserId) {
+        throw {
+          status: 400,
+          message: '자신을 언팔로우 할 수 없습니다.',
         };
       }
       if (sessionUser.user_id !== fromUserId) {
