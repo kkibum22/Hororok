@@ -28,6 +28,7 @@ class UserController {
     this.router.delete('/:userId', isAuthenticated, this.deleteUser.bind(this));
     this.router.get('/:userId/followers', this.getFollowers.bind(this));
     this.router.get('/:userId/following', this.getFollowing.bind(this));
+    this.router.get('/:userId/liked-feeds', this.getLikedFeeds.bind(this));
     this.router.post(
       '/:fromUserId/follows/:toUserId',
       isAuthenticated,
@@ -152,6 +153,24 @@ class UserController {
       res
         .status(200)
         .json({ following: following.map((user) => new UserDto(user)) });
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+
+  async getLikedFeeds(req, res, next) {
+    try {
+      const userId = Number(req.params.userId);
+      if (!Number.isInteger(userId)) {
+        throw {
+          status: 400,
+          message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
+        };
+      }
+      const likedFeeds = await this.usersService.findLikedFeedsByUserId(userId);
+
+      res.status(200).json({ liked_feeds: likedFeeds });
     } catch (err) {
       console.log(err);
       next(err);
