@@ -20,12 +20,22 @@ class FeedService {
       where: {
         feed_id: Number(feedId),
       },
+      include: {
+        user: true,
+      },
     });
     return feed;
   }
 
   async getFeeds() {
-    const feeds = await prisma.feed.findMany();
+    const feeds = await prisma.feed.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+      include: {
+        user: true,
+      },
+    });
     return feeds;
   }
 }
