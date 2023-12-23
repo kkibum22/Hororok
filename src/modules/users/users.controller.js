@@ -129,10 +129,10 @@ class UserController {
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
         };
       }
-      const follwers = await this.usersService.findFollowersById(userId);
+      const followers = await this.usersService.findFollowersById(userId);
       res
         .status(200)
-        .json({ followers: follwers.map((user) => new UserDto(user)) });
+        .json({ followers: followers.map((user) => new UserDto(user)) });
     } catch (err) {
       next(err);
     }
@@ -147,11 +147,13 @@ class UserController {
           message: '잘못된 요청입니다. userId는 숫자 형식이여야 합니다.',
         };
       }
-      const follwing = await this.usersService.findFollowingById(userId);
+      const following = await this.usersService.findFollowingById(userId);
+
       res
         .status(200)
-        .json({ follwing: follwing.map((user) => new UserDto(user)) });
+        .json({ following: following.map((user) => new UserDto(user)) });
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }

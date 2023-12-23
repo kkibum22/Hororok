@@ -13,6 +13,9 @@ class UserDto {
     this.nickname = props.nickname;
     this.birth = props.birth;
     this.gender = props.gender;
+
+    this.followers_cnt = props._count?.followers;
+    this.following_cnt = props._count?.following;
   }
 }
 

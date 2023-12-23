@@ -11,6 +11,14 @@ class UsersService {
       where: {
         user_id: userId,
       },
+      include: {
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+          },
+        },
+      },
     });
     if (!user) {
       throw { status: 404, message: '해당 유저가 존재하지 않습니다.' };
@@ -55,7 +63,7 @@ class UsersService {
 
     await prisma.user.delete({
       where: {
-        user_id: userId,
+        user_id: user.user_id,
       },
     });
   }
