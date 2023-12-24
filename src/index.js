@@ -6,6 +6,8 @@ import Controllers from './modules';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { isAuthenticated } from './middlewares/isAuthenticated';
+import FeedService from './modules/feed/feed.service';
+import CommentService from './modules/comment/comment.service';
 const MemoryStore = require('memorystore')(session);
 
 (async () => {
@@ -42,7 +44,10 @@ const MemoryStore = require('memorystore')(session);
     }),
   );
 
-  //코멘트 생성
+  const feedService = new FeedService();
+  const commentService = new CommentService();
+
+  //코멘트 생성 - 서비스 분리 완료
   app.post(
     '/feeds/:feedId/comments',
     isAuthenticated,
@@ -53,13 +58,7 @@ const MemoryStore = require('memorystore')(session);
 
       console.log(user);
       try {
-        const newComment = await prisma.comment.create({
-          data: {
-            contents,
-            feed: { connect: { feed_id: parseInt(feedId) } },
-            user: { connect: { user_id: parseInt(user.user_id) } },
-          },
-        });
+        await commentService.cerateComment(feedId, contents, user.user_id);
         res.status(201).json();
       } catch (err) {
         next(err);
@@ -67,23 +66,19 @@ const MemoryStore = require('memorystore')(session);
     },
   );
 
-  //코멘트 조회
+  //코멘트 조회 - 서비스 분리 완료
   app.get('/feeds/:feedId/comments', async (req, res, next) => {
     const { feedId } = req.params;
     try {
-      const comments = await prisma.comment.findMany({
-        where: {
-          feed_id: parseInt(feedId),
-        },
-      });
-      res.status(200).json({ comments: comments });
+      const comments = await commentService.getComment(feedId);
+      res.status(200).json({ comments });
     } catch (err) {
       console.log(err);
       next(err);
     }
   });
 
-  //코멘트 수정
+  //코멘트 수정 - 서비스 분리 완료
   app.patch(
     '/feeds/comments/:commentId',
     isAuthenticated,
@@ -92,15 +87,11 @@ const MemoryStore = require('memorystore')(session);
       const { contents } = req.body;
       const user = req.session.user;
       try {
-        const upadtedComment = await prisma.comment.update({
-          where: {
-            comment_id: parseInt(commentId),
-          },
-          data: {
-            contents,
-            user: { connect: { user_id: parseInt(user.user_id) } },
-          },
-        });
+        const upadtedComment = await commentService.patchCommenmt(
+          commentId,
+          contents,
+          user,
+        );
         res.status(204).json();
       } catch (err) {
         next(err);
@@ -108,7 +99,7 @@ const MemoryStore = require('memorystore')(session);
     },
   );
 
-  //코멘트 삭제
+  //코멘트 삭제 - 서비스 분리 완료
   app.delete(
     '/feeds/comments/:commentId',
     isAuthenticated,
@@ -117,12 +108,10 @@ const MemoryStore = require('memorystore')(session);
       const user = req.session.user;
 
       try {
-        const deletedComment = await prisma.comment.delete({
-          where: {
-            comment_id: parseInt(commentId),
-            user_id: parseInt(user.user_id),
-          },
-        });
+        const deletedComment = await commentService.deletrComment(
+          commentId,
+          user,
+        );
         res.status(204).json();
       } catch (err) {
         next(err);
@@ -130,44 +119,26 @@ const MemoryStore = require('memorystore')(session);
     },
   );
 
-  // route
-  Controllers.forEach((controller) => {
-    app.use(controller.path, controller.router);
-  });
-
-  //피드 수정
+  //피드 수정 - 서비스 분리 완료
   app.patch('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
     const { feedId } = req.params;
     const { contents } = req.body;
     const user = req.session.user;
     try {
-      const upadtedFeed = await prisma.feed.update({
-        where: {
-          feed_id: parseInt(feedId),
-        },
-        data: {
-          contents,
-          user: { connect: { user_id: parseInt(user.user_id) } },
-        },
-      });
+      await feedService.patchFeeds(feedId, contents, user.user_id);
       res.status(204).json();
     } catch (err) {
       next(err);
     }
   });
 
-  //피드 삭제
+  //피드 삭제 - 서비스 분리 완료
   app.delete('/feeds/:feedId', isAuthenticated, async (req, res, next) => {
     const { feedId } = req.params;
     const user = req.session.user;
 
     try {
-      const deletedFeed = await prisma.feed.delete({
-        where: {
-          feed_id: parseInt(feedId),
-          user_id: parseInt(user.user_id),
-        },
-      });
+      await feedService.deleteFeeds(feedId, user.user_id);
       res.status(204).json();
     } catch (err) {
       next(err);
