@@ -39,7 +39,7 @@ class CommentService {
     });
   }
 
-  async deletrComment(commentId, user) {
+  async deleteComment(commentId, user) {
     const deletedComment = await prisma.comment.delete({
       where: {
         comment_id: parseInt(commentId),
