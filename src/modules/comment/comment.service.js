@@ -1,7 +1,7 @@
 import prisma from '../../db';
 
 class CommentService {
-  async cerateComment(feedId, contents, userId) {
+  async createComment(feedId, contents, userId) {
     const newComment = await prisma.comment.create({
       data: {
         contents,
@@ -9,7 +9,7 @@ class CommentService {
         user: { connect: { user_id: parseInt(userId) } },
       },
     });
-    return;
+    return newComment;
   }
 
   async getComment(feedId) {
@@ -27,7 +27,7 @@ class CommentService {
     return comments;
   }
 
-  async patchCommenmt(commentId, contents, user) {
+  async patchComment(commentId, contents, user) {
     const upadtedComment = await prisma.comment.update({
       where: {
         comment_id: parseInt(commentId),
@@ -37,6 +37,7 @@ class CommentService {
         user: { connect: { user_id: parseInt(user.user_id) } },
       },
     });
+    return;
   }
 
   async deleteComment(commentId, user) {
@@ -46,6 +47,7 @@ class CommentService {
         user_id: parseInt(user.user_id),
       },
     });
+    return;
   }
 }
 
