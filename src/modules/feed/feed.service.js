@@ -38,6 +38,28 @@ class FeedService {
     });
     return feeds;
   }
+  async patchFeeds(feedId, contents, userId) {
+    const upadtedFeed = await prisma.feed.update({
+      where: {
+        feed_id: parseInt(feedId),
+      },
+      data: {
+        contents,
+        user: { connect: { user_id: parseInt(userId) } },
+      },
+    });
+    return;
+  }
+
+  async deleteFeeds(feedId, userId) {
+    const deletedFeed = await prisma.feed.delete({
+      where: {
+        feed_id: parseInt(feedId),
+        user_id: parseInt(userId),
+      },
+    });
+    return;
+  }
 }
 
 export default FeedService;
