@@ -38,7 +38,7 @@ class FeedService {
     });
     return feeds;
   }
-  async patchFeeds(feedId, contents, userId) {
+  async patchFeed(feedId, contents, userId) {
     const upadtedFeed = await prisma.feed.update({
       where: {
         feed_id: parseInt(feedId),
@@ -51,7 +51,7 @@ class FeedService {
     return;
   }
 
-  async deleteFeeds(feedId, userId) {
+  async deleteFeed(feedId, userId) {
     const deletedFeed = await prisma.feed.delete({
       where: {
         feed_id: parseInt(feedId),
