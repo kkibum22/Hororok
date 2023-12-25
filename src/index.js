@@ -5,10 +5,12 @@ import prisma from './db';
 import Controllers from './modules';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import { isAuthenticated } from './middlewares/isAuthenticated';
-import FeedService from './modules/feed/feed.service';
-import CommentService from './modules/comment/comment.service';
+import { config } from 'dotenv';
 const MemoryStore = require('memorystore')(session);
+
+const config = config();
+
+dotenv.config();
 
 (async () => {
   const app = express();
@@ -18,7 +20,7 @@ const MemoryStore = require('memorystore')(session);
   // middleware
   app.use(
     cors({
-      origin: 'http://localhost:5173', // Vue 앱의 URL로 변경
+      origin: process.env.CORS_URL, // Vue 앱의 URL로 변경
       credentials: true,
     }),
   );
