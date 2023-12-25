@@ -45,7 +45,7 @@ class UsersService {
         name: editUserDto.name,
         nickname: editUserDto.nickname,
         birth: editUserDto.birth,
-        gender: editUserDto.birth,
+        gender: editUserDto.gender,
         pw: editUserDto.pw,
       },
     });
