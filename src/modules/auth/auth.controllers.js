@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import AuthService from './auth.service';
-import { isAuthenticated } from '../../middlewares/isAuthenticated';
 
 class AuthController {
   router;
-  path = '/auth'; // path-prefix
+  path = '/'; // path-prefix
   authService;
 
   constructor() {
