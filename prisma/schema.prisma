@@ -22,7 +22,7 @@ model User {
   updated_at DateTime?
 
   following Follow[]   @relation("from_user")
-  followers  Follow[]   @relation("to_user")
+  followers Follow[]   @relation("to_user")
   feeds     Feed[]
   comments  Comment[]
   feedlikes Feedlike[]
@@ -32,10 +32,10 @@ model Follow {
   follow_id Int @id @default(autoincrement())
 
   to_user_id Int
-  to_user    User @relation("to_user", fields: [to_user_id], references: [user_id])
+  to_user    User @relation("to_user", fields: [to_user_id], references: [user_id], onDelete: Cascade)
 
   from_user_id Int
-  from_user    User @relation("from_user", fields: [from_user_id], references: [user_id])
+  from_user    User @relation("from_user", fields: [from_user_id], references: [user_id], onDelete: Cascade)
 }
 
 model Feed {
@@ -45,7 +45,7 @@ model Feed {
   updated_at DateTime?
 
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
+  user    User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   comments  Comment[]
   feedlikes Feedlike[]
@@ -61,15 +61,15 @@ model Comment {
   feed    Feed @relation(fields: [feed_id], references: [feed_id], onDelete: Cascade)
 
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
+  user    User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 }
 
 model Feedlike {
   user_id Int
-  user    User @relation(fields: [user_id], references: [user_id],onDelete: Cascade)
+  user    User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   feed_id Int
-  feed    Feed @relation(fields: [feed_id], references: [feed_id],onDelete: Cascade)
+  feed    Feed @relation(fields: [feed_id], references: [feed_id], onDelete: Cascade)
 
   @@id([user_id, feed_id])
 }
