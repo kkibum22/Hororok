@@ -131,7 +131,7 @@ class UsersService {
       },
     });
 
-    return likedFeeds.map((n) => n.user_id);
+    return likedFeeds.map((n) => n.feed_id);
   }
 
   async createFollows(fromUserId, toUserId) {
