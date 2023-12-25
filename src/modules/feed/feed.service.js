@@ -22,6 +22,12 @@ class FeedService {
       },
       include: {
         user: true,
+        _count: {
+          select: {
+            comments: true,
+            feedlikes: true,
+          },
+        },
       },
     });
     return feed;
@@ -34,10 +40,17 @@ class FeedService {
       },
       include: {
         user: true,
+        _count: {
+          select: {
+            comments: true,
+            feedlikes: true,
+          },
+        },
       },
     });
     return feeds;
   }
+
   async patchFeed(feedId, contents, userId) {
     const upadtedFeed = await prisma.feed.update({
       where: {
@@ -59,6 +72,55 @@ class FeedService {
       },
     });
     return;
+  }
+
+  async likeFeed(feedId, userId) {
+    const exist = await prisma.feedlike.findUnique({
+      where: {
+        user_id_feed_id: {
+          user_id: parseInt(userId),
+          feed_id: parseInt(feedId),
+        },
+      },
+    });
+    if (exist) return;
+
+    await prisma.feedlike.create({
+      data: {
+        user: {
+          connect: {
+            user_id: parseInt(userId),
+          },
+        },
+        feed: {
+          connect: {
+            feed_id: parseInt(feedId),
+          },
+        },
+      },
+    });
+    return;
+  }
+
+  async unlikeFeed(feedId, userId) {
+    const exist = await prisma.feedlike.findUnique({
+      where: {
+        user_id_feed_id: {
+          user_id: parseInt(userId),
+          feed_id: parseInt(feedId),
+        },
+      },
+    });
+    if (!exist) return;
+    const newFeed = await prisma.feedlike.delete({
+      where: {
+        user_id_feed_id: {
+          user_id: parseInt(userId),
+          feed_id: parseInt(feedId),
+        },
+      },
+    });
+    return newFeed;
   }
 }
 
