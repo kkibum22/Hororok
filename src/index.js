@@ -5,10 +5,8 @@ import prisma from './db';
 import Controllers from './modules';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 const MemoryStore = require('memorystore')(session);
-
-const config = config();
 
 dotenv.config();
 
