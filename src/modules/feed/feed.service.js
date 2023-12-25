@@ -22,6 +22,12 @@ class FeedService {
       },
       include: {
         user: true,
+        _count: {
+          select: {
+            comments: true,
+            feedlikes: true,
+          },
+        },
       },
     });
     return feed;
@@ -34,10 +40,17 @@ class FeedService {
       },
       include: {
         user: true,
+        _count: {
+          select: {
+            comments: true,
+            feedlikes: true,
+          },
+        },
       },
     });
     return feeds;
   }
+
   async patchFeed(feedId, contents, userId) {
     const upadtedFeed = await prisma.feed.update({
       where: {
@@ -88,6 +101,7 @@ class FeedService {
     });
     return;
   }
+
   async unlikeFeed(feedId, userId) {
     const exist = await prisma.feedlike.findUnique({
       where: {

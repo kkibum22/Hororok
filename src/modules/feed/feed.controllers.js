@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import FeedService from './feed.service';
 import { isAuthenticated } from '../../middlewares/isAuthenticated';
+import FeedDto from './dto/feed.dto';
 
 class FeedController {
   router;
@@ -37,7 +38,7 @@ class FeedController {
       const { feedid } = req.params;
       const feed = await this.feedService.getFeed(feedid);
 
-      res.status(200).json({ feed });
+      res.status(200).json({ feed: new FeedDto(feed) });
     } catch (err) {
       next(err);
     }
@@ -47,7 +48,7 @@ class FeedController {
     try {
       const feeds = await this.feedService.getFeeds();
 
-      res.status(200).json({ feeds: feeds });
+      res.status(200).json({ feeds: feeds.map((feed) => new FeedDto(feed)) });
     } catch (err) {
       next(err);
     }
